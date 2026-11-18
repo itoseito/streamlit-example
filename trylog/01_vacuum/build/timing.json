@@ -1,90 +1,90 @@
 [
  {
   "start": 0.0,
-  "dur": 7.067,
-  "voice": 6.17,
+  "dur": 7.225,
+  "voice": 6.33,
   "cues": {
-   "evening": 1.683
+   "evening": 1.872
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 7.067,
-  "dur": 7.462,
-  "voice": 6.56,
+  "start": 7.225,
+  "dur": 7.439,
+  "voice": 6.54,
   "cues": {
-   "wall": 4.351,
-   "out": 5.311
+   "wall": 4.631,
+   "out": 5.58
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 14.528,
-  "dur": 7.095,
-  "voice": 6.19,
+  "start": 14.664,
+  "dur": 7.119,
+  "voice": 6.22,
   "cues": {
-   "inner": 3.729,
-   "outer": 5.043
+   "inner": 3.808,
+   "outer": 5.343
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 21.623,
-  "dur": 6.785,
-  "voice": 5.89,
+  "start": 21.783,
+  "dur": 6.681,
+  "voice": 5.78,
   "cues": {
-   "pull": 3.054,
-   "name": 4.963
+   "pull": 2.959,
+   "name": 4.907
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 28.409,
-  "dur": 9.719,
-  "voice": 8.82,
+  "start": 28.464,
+  "dur": 9.711,
+  "voice": 8.81,
   "cues": {
-   "gap": 4.106,
-   "stop": 7.699
+   "gap": 4.708,
+   "stop": 8.063
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 38.128,
-  "dur": 7.56,
-  "voice": 6.66,
+  "start": 38.175,
+  "dur": 7.343,
+  "voice": 6.44,
   "cues": {
-   "shine": 2.103,
+   "shine": 2.321,
    "bounce": 5.783
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 45.688,
-  "dur": 7.319,
-  "voice": 6.42,
+  "start": 45.517,
+  "dur": 7.183,
+  "voice": 6.28,
   "cues": {
-   "lid": 0.831,
-   "leak": 5.646
+   "lid": 1.253,
+   "leak": 5.825
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 53.007,
-  "dur": 6.884,
-  "voice": 5.98,
+  "start": 52.7,
+  "dur": 6.991,
+  "voice": 6.09,
   "cues": {
-   "heat": 2.129,
-   "block": 3.1
+   "heat": 2.433,
+   "block": 3.677
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  },
  {
-  "start": 59.892,
-  "dur": 6.113,
-  "voice": 4.01,
+  "start": 59.691,
+  "dur": 6.089,
+  "voice": 3.99,
   "cues": {
-   "path": 1.739
+   "path": 2.188
   },
-  "src": "仮の合成音声"
+  "src": "VOICEVOX:四国めたん（ノーマル）"
  }
 ]

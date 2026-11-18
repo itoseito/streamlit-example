@@ -13,17 +13,60 @@ SR = 48000
 ROOT = Path(__file__).resolve().parent
 DIC = "/var/lib/mecab/dic/open-jtalk/naist-jdic"
 VOICE = "/usr/share/hts-voice/nitech-jp-atr503-m001/nitech_jp_atr503_m001.htsvoice"
+VV_DIR = ROOT / ".tools" / "voicevox"            # setup_voice.sh で入る。無ければ Open JTalk の仮の声
+VV_STYLE, VV_NAME = 2, "VOICEVOX:四国めたん（ノーマル）"
+VV_SPEED, VV_PAUSE = 1.0, 1.25                   # 話速 / 読点・句点の間の倍率
 LEAD, TAIL, END_HOLD = 0.35, 0.55, 1.2      # 声の前の間 / 後の間 / 最後の余韻（秒）
 VOICE_RATE = 1.0                             # 合成音声の話速（1.0が標準）
 SFX_GAIN, VOICE_GAIN = 0.20, 0.95
 
 
-def read_wav(p):
+_syn = None
+def voicevox():
+    global _syn
+    if _syn is None:
+        from voicevox_core.blocking import Onnxruntime, OpenJtalk, Synthesizer, VoiceModelFile
+        lib = next(VV_DIR.glob("voicevox_onnxruntime-*/lib/libvoicevox_onnxruntime.so.*"))
+        _syn = Synthesizer(Onnxruntime.load_once(filename=str(lib)), OpenJtalk(DIC))
+        with VoiceModelFile.open(str(VV_DIR / "0.vvm")) as m:
+            _syn.load_voice_model(m)
+    return _syn
+
+
+def tts_voicevox(text, cue_words, out):
+    """声を合成し、合図の言葉が実際に読まれる時刻（秒）を音の長さの内訳から求める。"""
+    syn = voicevox()
+    aq = syn.create_audio_query(text, VV_STYLE)
+    aq.speed_scale = VV_SPEED
+    starts, t = [], aq.pre_phoneme_length
+    for ap in aq.accent_phrases:
+        for m in ap.moras:
+            starts.append(t); t += (m.consonant_length or 0) + m.vowel_length
+        if ap.pause_mora:
+            pm = ap.pause_mora
+            if isinstance(pm, dict):
+                pm["vowel_length"] *= VV_PAUSE; t += pm["vowel_length"]
+            else:
+                pm.vowel_length *= VV_PAUSE; t += pm.vowel_length
+    cues = {}
+    for k, word in cue_words.items():
+        pos = text.find(word)
+        if pos < 0:
+            sys.exit(f"合図の言葉「{word}」が台本にありません")
+        n = sum(len(ap.moras) for ap in syn.create_audio_query(text[:pos], VV_STYLE).accent_phrases) if pos else 0
+        cues[k] = starts[min(n, len(starts) - 1)] / VV_SPEED
+    out.write_bytes(syn.synthesis(aq, VV_STYLE))
+    return cues, aq.kana
+
+
+def read_wav(p, trim=True):
     tmp = p.with_suffix(".48k.wav")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(p), "-ac", "1", "-ar", str(SR), "-c:a", "pcm_s16le", str(tmp)], check=True)
     with wave.open(str(tmp)) as w:
         a = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768
     tmp.unlink()
+    if not trim:
+        return a
     nz = np.flatnonzero(np.abs(a) > 0.01)        # 前後の無音を切る
     return a[max(nz[0] - 480, 0): nz[-1] + 2400] if len(nz) else a
 
@@ -69,19 +112,26 @@ def main(name):
     timing, voices, t0 = [], [], 0.0
     for i, s in enumerate(tl["scenes"], 1):
         custom = d / "voice_custom" / f"s{i:02d}.wav"
+        out, kana, cues = b / "voice" / f"s{i:02d}.wav", "", None
         if custom.exists():
             v, src = read_wav(custom), "差し替え音声"
+        elif (VV_DIR / "0.vvm").exists():
+            c, kana = tts_voicevox(s["narration"], s["cues"], out)
+            v, src = read_wav(out, trim=False), VV_NAME
+            cues = {k: round(LEAD + x, 3) for k, x in c.items()}
         else:
-            out = b / "voice" / f"s{i:02d}.wav"
             tts(s["narration"], out)
-            v, src = read_wav(out), "仮の合成音声"
+            v, src = read_wav(out), "仮の合成音声（Open JTalk）"
         vd = len(v) / SR
-        cues = {}
-        for k, word in s["cues"].items():       # 合図＝その言葉が読まれるおおよその時刻
-            pos = s["narration"].find(word)
-            if pos < 0:
-                sys.exit(f"場面{i}: 合図の言葉「{word}」が台本にありません")
-            cues[k] = round(LEAD + vd * pos / len(s["narration"]), 3)
+        if cues is None:                        # 声の内訳が分からない場合は文字位置からの概算
+            cues = {}
+            for k, word in s["cues"].items():
+                pos = s["narration"].find(word)
+                if pos < 0:
+                    sys.exit(f"場面{i}: 合図の言葉「{word}」が台本にありません")
+                cues[k] = round(LEAD + vd * pos / len(s["narration"]), 3)
+        if kana:
+            print(f"   読み s{i:02d}: {kana}")
         dur = LEAD + vd + TAIL + (END_HOLD if i == len(tl["scenes"]) else 0)
         timing.append({"start": round(t0, 3), "dur": round(dur, 3), "voice": round(vd, 2), "cues": cues, "src": src})
         voices.append(v); t0 += dur

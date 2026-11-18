@@ -8,11 +8,12 @@ python3 build.py 01_vacuum      # → 01_vacuum/01_vacuum_v2.mp4（1080×1920・
 - `build.py`：音声の合成、場面の長さと合図の計算、効果音の生成、書き出し。
 - 声の差し替え：`01_vacuum/voice_custom/s01.wav`〜`s09.wav` を置いて再ビルドすると、長さと絵のタイミングが自動で合う。
 
-必要なもの：Python 3（numpy）、Node.js（playwright）、ffmpeg、Open JTalk（仮の声を使う場合）。
+必要なもの：Python 3（numpy）、Node.js（playwright）、ffmpeg、VOICEVOX（`setup_voice.sh`）。
 
 ## 素材と利用条件
 - フォント：Noto Sans JP（SIL Open Font License 1.1、`fonts/LICENSE-NotoSansJP.txt`）。表記義務なし。
-- 仮のナレーション：Open JTalk ＋ HTS voice "NIT ATR503 M001"（Creative Commons Attribution 3.0）。**この声のまま公開する場合はクレジット表記が必要。**
+- ナレーション：VOICEVOX（四国めたん・ノーマル）で合成。商用・非商用とも利用可。**公開時は説明欄などに「VOICEVOX:四国めたん」のクレジット表記が必要。** 規約は `.tools/voicevox/TERMS.txt` と https://zunko.jp/con_ongen_kiyaku.html 。
+- VOICEVOX本体と声のデータ（約58MB）はリポジトリに入れていない。`./setup_voice.sh` で入る。入っていない環境では Open JTalk の仮の声（CC BY 3.0、要クレジット）で代用される。
 - 効果音：`build.py` 内で波形から生成した自作音。第三者素材は不使用。
 - ChatGPT版の音声・効果音・参考資料は受け取っていないため、本ソースには含まれていない。
 

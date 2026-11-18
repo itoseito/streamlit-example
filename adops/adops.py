@@ -19,6 +19,8 @@ HERE = Path(__file__).resolve().parent
 DATA = Path(os.environ.get("ADOPS_DATA", HERE.parent / "data"))
 SHOPS, EVENTS = DATA / "shops.csv", DATA / "events.csv"
 CFG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
+if (DATA / "config.json").exists():  # 個人名など公開しない設定はこちらで上書き
+    CFG.update(json.loads((DATA / "config.json").read_text(encoding="utf-8")))
 
 FIELDS = ["id", "name", "ig", "category", "area", "source_url", "checked_date", "reason",
           "status", "photo_permission", "assets_approved", "approved_count",
@@ -123,6 +125,11 @@ def cmd_add(a):
     log(sid or "-", "候補登録", "実行" if sid else "拒否", f"{a.name}: {msg}")
     if not sid:
         die(msg)
+    if a.sent_date:
+        r = rows[-1]
+        r["status"], r["sent_date"], r["note"] = "送信済", a.sent_date, "ツール導入前に本人が送信"
+        r["generated_count"], r["approved_count"] = str(a.sent_count), str(a.sent_count)
+        log(sid, "送信記録", detail=f"導入前の送信を取り込み（{a.sent_date}・{a.sent_count}枚）")
     save(rows)
     print(f"{sid} を登録しました（{a.name}）")
 
@@ -168,6 +175,9 @@ def cmd_draft(a):
           f"Instagramを拝見して、お店の雰囲気に合いそうな{sample}無料でお作りしました。よければご覧ください。\n"
           f"気に入っていただけた場合の制作は、{CFG['paid_terms']}。\n"
           f"不要でしたら返信なしで大丈夫です。")
+    tpl = DATA / "dm_template.txt"
+    if tpl.exists():
+        dm = tpl.read_text(encoding="utf-8").format(name=r["name"], reason=r["reason"], n=n or "")
     brief = f"""# {r['id']} {r['name']}（{r['category']}・{r['area']}）
 - Instagram: https://www.instagram.com/{r['ig']}/
 - 情報源: {r['source_url']}（確認日 {r['checked_date']}）
@@ -463,7 +473,8 @@ def main():
     DATE = (("--date",), {})
     sub("add", cmd_add, (("--name",), {"required": True}), (("--ig",), {"default": ""}),
         (("--category",), {"default": "物販", "choices": list(SCENES)}), (("--area",), {"default": ""}),
-        (("--source-url",), {"required": True}), (("--reason",), {"required": True}))
+        (("--source-url",), {"required": True}), (("--reason",), {"required": True}),
+        (("--sent-date",), {"help": "導入前に送信済みの店。日付が不明なら 不明"}), (("--sent-count",), {"type": int, "default": 0}))
     sub("import", cmd_import, (("csv",), {}))
     sub("list", cmd_list)
     sub("draft", cmd_draft, ID)

@@ -11,6 +11,9 @@
     "author": "著者の主張（James Clear）",
     "trylog": "TRY LOGの応用例"
   },
+  "speed": 1.45,
+  "lead": 0.25,
+  "tail": 0.35,
   "scenes": [
     {
       "id": "home",

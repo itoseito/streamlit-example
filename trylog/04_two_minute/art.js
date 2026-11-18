@@ -31,32 +31,44 @@ function room(lt, { min = 1170, glow = 0, dark = 0, down = 0 } = {}) {
 const chip = (x, y, s, o, col = MINT, w = 130) => box(x - w / 2, y, w, 44, o, PANEL, col, 2.5, 22) + txt(x, y + 30, s, o, col, 22);
 
 // ---- 言いかえの3行（左：もとの目標 → 右：2分の形） ----
+const ICON = {
+  book: `<path d="M2 9 q10 -6 20 0 q10 -6 20 0 v27 q-10 -6 -20 0 q-10 -6 -20 0z M22 9 v27"/>`,
+  mat: `<path d="M12 20 h28 v18 h-28"/><circle cx="12" cy="29" r="9"/><circle cx="12" cy="29" r="3.5"/>`,
+  note: `<rect x="9" y="4" width="28" height="36" rx="3"/><path d="M16 14 h14 M16 22 h14 M16 30 h8"/>`,
+  laptop: `<rect x="7" y="8" width="30" height="21" rx="2.5"/><path d="M2 36 h40 M14 17 h12"/>`,
+  quiz: `<rect x="8" y="4" width="28" height="36" rx="3"/><path d="M17 16 q0 -6 5 -6 q5 0 5 5 q0 4 -5 6 v3 M22 31 v.5"/>`,
+  shirt: `<path d="M14 6 l-12 8 l6 9 l6 -4 v21 h16 v-21 l6 4 l6 -9 l-12 -8 q-8 6 -16 0z"/>` };
+const ico = (n, x, y, col, o, lt0) => `<g transform="translate(${x} ${y}) rotate(${Math.sin(lt0 * 3) * 4} 22 22)" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="${o}">${ICON[n]}</g>`;
 function conv(lt, c, rows, col) { let s = "";
-  rows.forEach(([a, b], i) => { const k = "abc"[i], y = 22 + i * 110, A = seg(lt, c[k] - .15, .4), B = seg(lt, c[k + "2"] - .15, .4);
+  rows.forEach(([a, b, ic], i) => { const k = "abc"[i], y = 22 + i * 110, A = seg(lt, c[k] - .15, .4), B = seg(lt, c[k + "2"] - .15, .4);
     s += box(70, y, 340, 84, A, PANEL, "#3a5563") + txt(240, y + 52, a, A * (1 - B * .45), INK, 25);
     s += arrow(430, y + 42, 430 + 90 * B, y + 42, B, col, 4);
-    s += box(550 + (1 - B) * 30, y, 340, 84, B, PANEL, col, 3.5) + txt(720 + (1 - B) * 30, y + 52, b, B, col, 25); });
+    s += box(550 + (1 - B) * 30, y, 340, 84, B, PANEL, col, 3.5) + ico(ic, 568 + (1 - B) * 30, y + 20, col, B, lt + i) + txt(746 + (1 - B) * 30, y + 51, b, B, col, 22); });
   return s; }
 
 // ---- 道と山（始めるハードル）。H=山の高さ, x=玉の位置 ----
+// 道を歩く小さな人（部屋の人と同じ形）。足元が (x, y)
+const walker = (x, y, o = 1) => { const b = Math.abs(Math.sin(x * .09)) * 4;
+  return `<g opacity="${o}"><rect x="${x - 10}" y="${y - 30 - b}" width="20" height="28" rx="9" fill="#6f8d99"/><circle cx="${x}" cy="${y - 42 - b}" r="11" fill="#cfe3e6"/>
+  <line x1="${x - 4}" y1="${y - 4}" x2="${x - 4 - Math.sin(x * .09) * 6}" y2="${y}" stroke="#587582" stroke-width="5" stroke-linecap="round"/><line x1="${x + 4}" y1="${y - 4}" x2="${x + 4 + Math.sin(x * .09) * 6}" y2="${y}" stroke="#587582" stroke-width="5" stroke-linecap="round"/></g>`; };
 const BY = 262, bump = (x, H) => H * Math.exp(-Math.pow((x - 250) / 62, 2));
 function track(H, x, o = 1, goal = "やりたいこと") { let d = "";
   for (let X = 70; X <= 890; X += 6) d += (d ? "L" : "M") + X + " " + (BY - bump(X, H)).toFixed(1);
   return `<path d="${d}" stroke="#a9c3cc" stroke-width="5" fill="none" stroke-linecap="round"/>
     <line x1="872" y1="${BY}" x2="872" y2="${BY - 74}" stroke="${INK}" stroke-width="4"/><path d="M872 ${BY - 74} l-46 14 l46 14z" fill="${ORANGE}"/>`
-    + txt(858, BY - 86, goal, 1, ORANGE, 19) + `<circle cx="${x}" cy="${BY - bump(x, H) - 16}" r="14" fill="${MINT}" opacity="${o}"/>`; }
+    + txt(858, BY - 86, goal, 1, ORANGE, 19) + walker(x, BY - bump(x, H), o); }
 const bracket = (x1, x2, y, s, o, col) => `<path d="M${x1} ${y - 10} v10 h${x2 - x1} v-10" stroke="${col}" stroke-width="3.5" fill="none" opacity="${o}" stroke-linecap="round"/>` + txt((x1 + x2) / 2, y + 30, s, o, col, 21);
-const stuck = lt => 112 + 78 * Math.abs(Math.sin(lt * 1.5));          // 山を登りきれず、戻ってしまう動き
+const stuck = lt => 112 + 78 * Math.abs(Math.sin(lt * 2.2));          // 山を登りきれず、戻ってしまう動き
 
 window.ART = {
   home(lt, c) { return room(lt, { min: 1170 + lt * .4, glow: seg(lt, c.phone - .1, .6) }); },
-  night(lt, c) { const k = seg(lt, c.clock, 1.8); return room(lt, { min: lerp(1173, 1380, k), glow: 1, dark: k }); },
+  night(lt, c) { const k = seg(lt, c.clock, 1.2); return room(lt, { min: lerp(1173, 1380, k), glow: 1, dark: k }); },
   wish(lt, c) { const L = seg(lt, c.later - .1, .5); let s = room(lt, { min: 1380, glow: 1, dark: 1 });
     [["勉強", "a", 340], ["運動", "b", 480], ["副業", "c", 620]].forEach(([w, k, x]) => { const o = seg(lt, c[k] - .15, .35);
       s += chip(x, 22 - (1 - o) * 10, w, o * (1 - L * .6), mix(MINT, DIM, L))
         + `<g transform="rotate(-8 ${x} 90)">${txt(x, 96, "あとで", L, ORANGE, 19)}</g>`; });
     return s; },
-  title(lt, c) { const k = seg(lt, c.rule - .2, 1.3), o = seg(lt, c.rule - .3, .4), A = seg(lt, c.abroad - .2, .4) * (1 - o), J = seg(lt, c.abroad + .9, .5) * (1 - o);
+  title(lt, c) { const k = seg(lt, c.rule - .2, .9), o = seg(lt, c.rule - .3, .4), A = seg(lt, c.abroad - .2, .4) * (1 - o), J = seg(lt, c.abroad + .9, .5) * (1 - o);
     return chip(250, 136, "海外の考え方", A, MINT, 260) + arrow(410, 158, 410 + 130 * J, 158, J, ORANGE, 4) + chip(710, 136, "日本の日常", J, ORANGE, 260)
       + txt(480, 250, "どう活かす？", J, DIM, 22) + ring(480, 158, 118, k, o) + txt(480, 186, "2分", o, INK, 84) + txt(480, 330, "The Two-Minute Rule", o, DIM, 22); },
   source(lt, c) { const a = seg(lt, c.name - .2, .4), b = seg(lt, c.book - .2, .4), d = seg(lt, c.site - .2, .4);
@@ -69,16 +81,16 @@ window.ART = {
     return ring(690, 170, 96, k, k) + box(x, y, w, h, a, mix("#3a5563", MINT, k), "none", 0, lerp(18, 14, k))
       + txt(lerp(270, 690, k), 178, "新しい習慣", a * (1 - k), INK, 30) + arrow(450, 170, 450 + 100 * k, 170, k * (1 - seg(lt, c.shrink + 1.2, .5)), MINT, 4)
       + txt(690, 312, "2分以内でできる形", k, MINT, 26) + txt(270, 312, "大きいままだと、始めにくい", a * (1 - k), DIM, 20); },
-  ex_author(lt, c) { return conv(lt, c, [["寝る前に本を読む", "1ページ読む"], ["30分ヨガをする", "ヨガマットを出す"], ["授業の勉強をする", "ノートを開く"]], MINT); },
-  why1(lt, c) { const k = seg(lt, c.start - .2, .5), g = seg(lt, c.go - .3, 3.2);
-    return track(150, stuck(lt), 1 - k) + `<circle cx="${lerp(330, 800, g)}" cy="${BY - 16}" r="14" fill="${MINT}" opacity="${k}"/>`
+  ex_author(lt, c) { return conv(lt, c, [["寝る前に本を読む", "1ページ読む", "book"], ["30分ヨガをする", "ヨガマットを出す", "mat"], ["授業の勉強をする", "ノートを開く", "note"]], MINT); },
+  why1(lt, c) { const k = seg(lt, c.start - .2, .5), g = seg(lt, c.go - .3, 2.0);
+    return track(150, stuck(lt), 1 - k) + walker(lerp(330, 800, g), BY, k)
       + txt(250, 76, "始めるまでが、大変", 1 - k * .6, ORANGE, 22) + txt(600, 200, "始めたあとは、進みやすい", k, MINT, 22); },
-  why2(lt, c) { const k = seg(lt, c.low - .1, .8), g = seg(lt, c.low + .7, 1.6), a = seg(lt, c.after - .2, .5), e = seg(lt, c.gate - .2, .4);
-    const x = g > 0 ? lerp(190, 360, g) + seg(lt, c.after, 4) * 240 : lerp(stuck(lt), 190, k);
+  why2(lt, c) { const k = seg(lt, c.low - .1, .8), g = seg(lt, c.low + .6, 1.0), a = seg(lt, c.after - .2, .5), e = seg(lt, c.gate - .2, .4);
+    const x = g > 0 ? lerp(190, 360, g) + seg(lt, c.after, 2.6) * 240 : lerp(stuck(lt), 190, k);
     return track(lerp(150, 26, k), x) + bracket(90, 350, BY + 22, "最初の2分＝簡単に", k, MINT) + bracket(370, 870, BY + 22, "そのあと＝大変でもいい", a, DIM)
       + txt(250, lerp(76, 200, k), "入口", .4 + e * .6, mix(DIM, ORANGE, e), 24) + arrow(250, 84, 250, 84 + 60 * k, k * (1 - a), ORANGE, 4); },
-  showup(lt, c) { let s = ""; const g = seg(lt, c.grow, 1.6);
-    "月火水木金土日".split("").forEach((d, i) => { const x = 136 + i * 104, o = seg(lt, c.check + i * .32, .3), h = 18 + g * (i + 1) * 13;
+  showup(lt, c) { let s = ""; const g = seg(lt, c.grow, 1.0);
+    "月火水木金土日".split("").forEach((d, i) => { const x = 136 + i * 104, o = seg(lt, c.check + i * .2, .3), h = 18 + g * (i + 1) * 13;
       s += txt(x + 32, 52, d, 1, DIM, 20) + box(x, 66, 64, 64, 1, PANEL, o > 0 ? MINT : "#3a5563")
         + `<path d="M${x + 16} ${98} l12 13 l22 -26" stroke="${MINT}" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="52" stroke-dashoffset="${52 * (1 - o)}"/>`
         + box(x + 12, 296 - h, 40, h, o, mix(MINT, ORANGE, g * .0), "none", 0, 5); });
@@ -89,29 +101,29 @@ window.ART = {
       + arrow(440, 162, 440 + 80 * k, 162, k, ORANGE, 4.5)
       + box(550, 112 - k * 4, 320, 100 + k * 8, .25 + k * .75, PANEL, ORANGE, 3 + k, 54) + txt(710, 173, "TRY LOGの応用例", .25 + k * .75, ORANGE, 30)
       + txt(710, 262, "日本の仕事終わり向けに考えた例", k, INK, 21) + txt(260, 250, "ここまで", 1, DIM, 19) ; },
-  ex_try(lt, c) { return conv(lt, c, [["副業を1時間する", "資料を開いて1行書く"], ["資格の勉強を30分", "テキストを開いて1問読む"], ["筋トレをする", "運動着に着替える"]], ORANGE); },
+  ex_try(lt, c) { return conv(lt, c, [["副業を1時間する", "資料を開いて1行書く", "laptop"], ["資格の勉強を30分", "テキストを開いて1問読む", "quiz"], ["筋トレをする", "運動着に着替える", "shirt"]], ORANGE); },
   step1(lt, c) { const p = seg(lt, c.pick - .2, .5), w = seg(lt, c.write - .2, .6), m = seg(lt, c.memo - .2, .5); let s = "";
     [["勉強", 0], ["運動", 0], ["副業", 1]].forEach(([t, on], i) => { s += chip(190, 70 + i * 86, t, on ? 1 : 1 - p * .7, on ? mix(MINT, ORANGE, p) : MINT, 170); });
     return s + txt(190, 44, "帰ってからやりたいこと", 1, DIM, 19) + txt(190, 340, "ひとつだけ選ぶ", p, ORANGE, 21)
       + arrow(300, 264, 300 + 150 * w, lerp(264, 180, w), w, ORANGE, 4)
       + box(480, 110, 380, 140, w, PANEL, ORANGE, 3.5, 18) + txt(670, 168, "2分でできる", w, INK, 28) + txt(670, 212, "最初の動き", w, ORANGE, 34)
       + txt(670, 290, "書きかえて、メモしておく", m, INK, 21); },
-  step2(lt, c) { const lines = ["帰ったら、", "資料を開いて", "1行書く"], n = lines.join("").length, k = cl((lt - c.type) / 2.6) * n, t = seg(lt, c.timer - .2, .5);
+  step2(lt, c) { const lines = ["帰ったら、", "資料を開いて", "1行書く"], n = lines.join("").length, k = cl((lt - c.type) / 1.7) * n, t = seg(lt, c.timer - .2, .5);
     let s = box(330, 8, 300, 344, 1, "#0f1f27", "#a9c3cc", 4, 30) + txt(480, 52, "メモ", 1, DIM, 20) + `<line x1="354" y1="68" x2="606" y2="68" stroke="#22363f" stroke-width="2"/>`, used = 0, cx = 362, cy = 96;
     lines.forEach((L, i) => { const m = Math.floor(cl(k - used, 0, L.length)); used += L.length;
       s += txt(362, 124 + i * 52, L.slice(0, m), 1, i ? ORANGE : INK, 34, "start"); if (m > 0 && m <= L.length) { cx = 362 + m * 34 + 4; cy = 96 + i * 52; } });
     s += `<rect x="${cx}" y="${cy}" width="3" height="34" fill="${MINT}" opacity="${lt > c.type - .5 && Math.sin(lt * 9) > 0 ? 1 : 0}"/>`;
     return s + `<g opacity=".55">${txt(170, 172, "副業を1時間", 1, DIM, 26)}<line x1="84" y1="164" x2="256" y2="164" stroke="${DIM}" stroke-width="3"/></g>` + txt(170, 208, "→ 小さく書きかえる", 1, DIM, 18)
-      + ring(790, 160, 76, cl((lt - c.timer) / 2.5), t, MINT, "2分だけ", 26) + txt(790, 276, "今夜、これだけ", t, MINT, 21); },
+      + ring(790, 160, 76, cl((lt - c.timer) / 1.5), t, MINT, "2分だけ", 26) + txt(790, 276, "今夜、これだけ", t, MINT, 21); },
   stop(lt, c) { const p = cl((lt - c.run) / Math.max(c.stop - c.run, .1)), k = seg(lt, c.stop - .05, .35), sec = Math.round(p * 120);
     return ring(480, 158, 118, p, 1, mix(ORANGE, MINT, k)) + txt(480, 150, `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`, 1 - k, INK, 56)
       + `<rect x="${480 - 30}" y="${128 - 30}" width="60" height="60" rx="10" fill="${MINT}" opacity="${k}"/>` + txt(480, 222, "ここでやめる", k, MINT, 24)
       + txt(480, 334, "わざとらしく感じるなら：2分やったら、必ずやめる", k, INK, 21); },
   limit1(lt, c) { const k = seg(lt, c.bracket - .2, .5); return track(26, 330 + Math.sin(lt * 2) * 3) + bracket(90, 350, BY + 22, "2分ルールが助けるのは、ここ", k, MINT) + txt(250, 200, "入口", 1, ORANGE, 24); },
   limit2(lt, c) { const k = seg(lt, c.far - .2, .6), b = seg(lt, c.beyond - .2, .5);
-    return track(26, 330 + cl(lt / 11) * 90, 1, "成果") + bracket(90, 350, BY + 22, "2分ルール", 1, MINT)
-      + `<line x1="370" y1="${BY - 44}" x2="${370 + 480 * k}" y2="${BY - 44}" stroke="${ORANGE}" stroke-width="4" stroke-dasharray="12 10" stroke-linecap="round"/>`
-      + txt(610, BY - 62, "ここから先は、積み重ね", k, ORANGE, 22) + bracket(370, 870, BY + 22, "本当の目標は、2分より先（著者）", b, DIM); },
+    return track(26, 330 + cl(lt / 7) * 90, 1, "成果") + bracket(90, 350, BY + 22, "2分ルール", 1, MINT)
+      + `<line x1="370" y1="${BY - 64}" x2="${370 + 480 * k}" y2="${BY - 64}" stroke="${ORANGE}" stroke-width="4" stroke-dasharray="12 10" stroke-linecap="round"/>`
+      + txt(610, BY - 80, "ここから先は、積み重ね", k, ORANGE, 22) + bracket(370, 870, BY + 22, "本当の目標は、2分より先（著者）", b, DIM); },
   honest(lt, c) { const a = seg(lt, c.no - .2, .5), b = seg(lt, c.yes - .2, .5);
     return box(90, 90, 360, 150, .35 + a * .65, PANEL, "#3a5563", 3, 18) + txt(270, 152, "試した結果の報告", .35 + a * .65, DIM, 28)
       + `<path d="M240 190 l60 0" stroke="none"/><g opacity="${a}" stroke="${ORANGE}" stroke-width="6" stroke-linecap="round"><line x1="250" y1="180" x2="290" y2="220"/><line x1="290" y1="180" x2="250" y2="220"/></g>`
@@ -124,5 +136,13 @@ window.ART = {
       + txt(190, 262, "“It’s far better to do less than you hoped than to do nothing at all.”", b, DIM, 19, "start")
       + txt(190, 302, "— James Clear（日本語はTRY LOGによる意訳）", b, DIM, 19, "start"); },
   end(lt, c) { const k = seg(lt, c.ring - .3, .6);
-    return room(lt, { min: 1170 + lt * .4, down: seg(lt, .4, .8) }) + ring(480, 76, 44, cl((lt - c.ring) / 3), k, MINT, "2分", 26); },
+    return room(lt, { min: 1170 + lt * .4, down: seg(lt, .4, .8) }) + ring(480, 76, 44, cl((lt - c.ring) / 2), k, MINT, "2分", 26); },
 };
+
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+let SEED = 0;
+for (const k in window.ART) { const f = window.ART[k], sd = SEED += 17;
+  window.ART[k] = (lt, c, d) => { let bg = ""; const p = seg(lt, 0, .5), sc = .93 + .07 * p;
+    for (let i = 0; i < 14; i++) { const x = (rnd(i + sd) * 960 + lt * (6 + rnd(i + sd + 40) * 10)) % 960, y = 20 + rnd(i + sd + 80) * 320 + Math.sin(lt * .8 + i) * 6;
+      bg += `<circle cx="${x}" cy="${y}" r="${1.5 + rnd(i + sd + 9) * 2.5}" fill="${i % 4 ? MINT : ORANGE}" opacity="${.10 + rnd(i + sd + 3) * .14}"/>`; }
+    return bg + `<g transform="translate(480 180) scale(${sc}) translate(-480 -180)">${f(lt, c, d)}</g>`; }; }

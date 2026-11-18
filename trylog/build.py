@@ -134,6 +134,8 @@ def bgm(total):
 def main(name):
     d = ROOT / name
     tl = json.loads((d / "timeline.json").read_text(encoding="utf-8"))
+    global VV_SPEED, LEAD, TAIL                  # 動画ごとに timeline.json の "speed" "lead" "tail" で変えられる
+    VV_SPEED, LEAD, TAIL = tl.get("speed", VV_SPEED), tl.get("lead", LEAD), tl.get("tail", TAIL)
     b = d / "build"; (b / "voice").mkdir(parents=True, exist_ok=True)
     timing, voices, t0 = [], [], 0.0
     for i, s in enumerate(tl["scenes"], 1):

@@ -19,6 +19,7 @@ VV_SPEED, VV_PAUSE = 1.0, 1.25                   # 話速 / 読点・句点の�
 LEAD, TAIL, END_HOLD = 0.35, 0.55, 1.2      # 声の前の間 / 後の間 / 最後の余韻（秒）
 VOICE_RATE = 1.0                             # 合成音声の話速（1.0が標準）
 SFX_GAIN, VOICE_GAIN = 0.20, 0.95
+BGM_GAIN = 0.045                             # --bgm を付けたときだけ入る。声よりかなり小さく
 
 
 _syn = None
@@ -105,6 +106,22 @@ def sfx(kind):
     raise ValueError(kind)
 
 
+def bgm(total):
+    """自作のBGM：ゆっくりした和音のパッド（第三者の音源は不使用）。"""
+    n = int(total * SR); t = np.arange(n) / SR; out = np.zeros(n, dtype=np.float32)
+    chords = [(220.0, 261.63, 329.63, 392.0), (174.61, 220.0, 261.63, 329.63),
+              (130.81, 196.0, 246.94, 329.63), (196.0, 246.94, 293.66, 392.0)]   # Am7 / Fmaj7 / Cmaj7 / G
+    bar = 4.0
+    for i in range(int(total / bar) + 1):
+        a, b = int(i * bar * SR), min(int((i * bar + bar + 1.5) * SR), n)       # 1.5秒重ねてなめらかに
+        if a >= n:
+            break
+        tt = t[: b - a]; e = np.minimum(tt / 1.5, 1) * np.minimum((tt[-1] - tt) / 1.5, 1)
+        for f in chords[i % 4]:
+            out[a:b] += (np.sin(2 * np.pi * f * tt) + np.sin(2 * np.pi * f * 1.004 * tt) + .25 * np.sin(2 * np.pi * 2 * f * tt)) * e / 9
+    return out * np.minimum(t / 1.5, 1) * np.minimum((total - t) / 2.0, 1).clip(0, 1)
+
+
 def main(name):
     d = ROOT / name
     tl = json.loads((d / "timeline.json").read_text(encoding="utf-8"))
@@ -143,6 +160,9 @@ def main(name):
             x = sfx(kind).astype(np.float32); a = int((T["start"] + T["cues"][cue]) * SR)
             mixbuf[a:a + len(x)] += x * SFX_GAIN
     mixbuf = mixbuf[: int(total * SR)]
+    use_bgm = "--bgm" in sys.argv
+    if use_bgm:
+        mixbuf += bgm(total)[: len(mixbuf)] * BGM_GAIN
     mixbuf /= max(1.0, np.abs(mixbuf).max() / .97)
     with wave.open(str(b / "audio.wav"), "w") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
@@ -155,7 +175,7 @@ def main(name):
     print(f"合計 {total:.1f}秒")
     if "--audio-only" in sys.argv:
         return
-    out = d / f"{name}_v2.mp4"
+    out = d / f"{name}_v2{'_bgm' if use_bgm else ''}.mp4"
     subprocess.run(["node", str(ROOT / "render.js"), str(d / "index.html"), str(b / "audio.wav"), str(out)], check=True)
     print("完成:", out)
 

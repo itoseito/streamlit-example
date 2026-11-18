@@ -1,0 +1,11 @@
+/* 縦型ショート（1080×1920）。common.css（縦型の元の配置）に重ねて使う。絵は横型の型（960×360）を幅いっぱいに置く。 */
+#brand{top:150px}#tag{top:206px}
+#badge{position:absolute;right:70px;top:160px;padding:8px 22px;border-radius:999px;font-weight:700;font-size:24px;border:3px solid var(--dim);color:var(--dim)}
+#badge.author{border-color:var(--mint);color:var(--mint)}#badge.trylog{border-color:var(--orange);color:var(--orange)}#badge.study{border-color:#7db7ff;color:#7db7ff}
+#badge.ai{border-color:#f6e9b8;color:#f6e9b8}#badge.author2{border-color:#c9a7ff;color:#c9a7ff}
+#head{top:300px;left:60px;right:60px;height:260px;display:flex;align-items:center;justify-content:center;font-size:72px;line-height:1.25}
+#art{left:0;top:600px;width:1080px;height:405px;background:#0d2029;border-top:3px solid #1c343d;border-bottom:3px solid #1c343d}
+#cap{top:1060px;left:60px;right:60px;height:190px;font-size:52px;line-height:1.3;padding:0 30px;text-align:center}
+#more{position:absolute;left:60px;right:60px;top:1300px;height:120px;border-radius:60px;border:5px solid var(--orange);color:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:50px}
+#note{top:1460px;left:70px;right:70px;font-size:21px;line-height:1.4}
+#bar{top:1560px}

@@ -1,0 +1,17 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><link rel="stylesheet" href="common.css">
+<!-- サムネB案：UI UX Pro Max の banner-design の決まりを当てはめた版。
+     ・大事な要素は中央70〜80%の安全域に入れる ・写真は全面（Photo-Based）＋文字が主役（Bold Typography）
+     ・書体は1種類、文字と背景のコントラスト4.5:1以上 ・配色は同資料の「Productivity Tool：ティール＋行動のオレンジ」（TRY LOGの既存色と同じ系統） -->
+<style>body,#t{width:1920px;height:1080px}#t{position:relative;overflow:hidden;background:#0b1820}
+#ph{position:absolute;right:-60px;top:-40px;width:1180px;height:1200px;background-size:cover;background-position:50% 10%;filter:saturate(.85) contrast(1.05)}
+#duo{position:absolute;inset:0;background:linear-gradient(90deg,#0b1820 0,#0b1820 34%,#0b1820d0 46%,#0d948833 70%,#0b182000 100%)}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 72% 45%,#0000 40%,#0b1820cc 100%)}
+#safe{position:absolute;left:192px;top:120px;right:192px;bottom:120px}
+#brand{position:absolute;left:0;top:0;font-weight:900;font-size:50px;color:var(--mint);letter-spacing:2px}#brand i{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--orange);margin-left:18px;vertical-align:20px}
+#txt{position:absolute;left:0;top:54%;transform:translateY(-50%);font-weight:900;line-height:1.1;color:#fff}
+#txt b{display:inline-block;background:var(--orange);color:#0b1820;padding:0 .12em;border-radius:.08em;margin-top:.08em}
+#ai{position:absolute;right:0;bottom:0;border:4px solid #f6e9b8;color:#f6e9b8;background:#0b1820e6;border-radius:999px;padding:8px 28px;font-weight:700;font-size:32px}</style></head><body>
+<div id="t"><div id="ph"></div><div id="duo"></div><div id="vig"></div><div id="safe"><div id="brand">TRY LOG<i></i></div><div id="txt"></div><div id="ai">AI生成の人物</div></div></div>
+<script>const q=new URLSearchParams(location.search),t=q.get("text")||"",n=t.length,half=q.get("br")?+q.get("br"):(n>4?Math.ceil(n/2):n),l1=t.slice(0,half),l2=t.slice(half),el=document.getElementById("txt");
+document.getElementById("ph").style.backgroundImage=`url(cast/${q.get("who")||"n1"}.jpg)`;
+el.style.fontSize=Math.min(220,Math.floor(860/Math.max(l1.length,l2.length,2)))+"px";el.innerHTML=l2?`${l1}<br><b>${l2}</b>`:`<b>${l1}</b>`;</script></body></html>

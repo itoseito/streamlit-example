@@ -1,0 +1,10 @@
+{
+  "_説明": "対外条件はここだけで管理する。null は「未確認・未決定」。承認なしに値を入れない。",
+  "paid_terms": "完成を見て、価値に応じてお支払いいただく形です（最低額はありません）",
+  "free_sample_count": null,
+  "fixed_costs_monthly_yen": {
+    "Higgsfield Plus": null
+  },
+  "credit_per_image": 1.5,
+  "sender_name": null
+}

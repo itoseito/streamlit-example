@@ -1,0 +1,58 @@
+[
+ {
+  "start": 0.0,
+  "dur": 3.202,
+  "voice": 2.75,
+  "cues": {
+   "corner": 1.938
+  },
+  "src": "VOICEVOX:四国めたん（ノーマル）"
+ },
+ {
+  "start": 3.202,
+  "dur": 4.855,
+  "voice": 4.41,
+  "cues": {
+   "push": 3.634
+  },
+  "src": "VOICEVOX:四国めたん（ノーマル）"
+ },
+ {
+  "start": 8.057,
+  "dur": 6.039,
+  "voice": 5.59,
+  "cues": {
+   "hole": 2.864,
+   "corner": 4.623
+  },
+  "src": "VOICEVOX:四国めたん（ノーマル）"
+ },
+ {
+  "start": 14.097,
+  "dur": 3.394,
+  "voice": 2.94,
+  "cues": {
+   "crack": 1.647
+  },
+  "src": "VOICEVOX:四国めたん（ノーマル）"
+ },
+ {
+  "start": 17.491,
+  "dur": 4.994,
+  "voice": 4.54,
+  "cues": {
+   "round": 0.567,
+   "smooth": 2.176
+  },
+  "src": "VOICEVOX:四国めたん（ノーマル）"
+ },
+ {
+  "start": 22.485,
+  "dur": 4.455,
+  "voice": 2.81,
+  "cues": {
+   "path": 2.241
+  },
+  "src": "VOICEVOX:四国めたん（ノーマル）"
+ }
+]

@@ -4,6 +4,7 @@
 python3 build.py 01_vacuum --bgm   # → 01_vacuum/01_vacuum_v2_bgm.mp4（1080×1920・30fps）。--bgm を外すとBGMなし
 python3 build.py 02_zipper --bgm
 python3 build.py 03_windows --bgm
+python3 build.py 05_when_where --bgm    # 横型 → 05_when_where/05_when_where_bgm.mp4
 python3 build.py 04_two_minute --bgm   # 横型 → 04_two_minute/04_two_minute_bgm.mp4（1920×1080・30fps）
 ```
 - `01_vacuum/timeline.json`：見出し・字幕・ナレーション・合図の言葉・効果音。文言の修正はここだけ。
@@ -12,6 +13,9 @@ python3 build.py 04_two_minute --bgm   # 横型 → 04_two_minute/04_two_minute_
 - 横型16:9：`timeline.json` に `"size": [1920, 1080]` を書き、`index.html` で `common_wide.css` も読み込む（配置だけ上書き。色と文字は共通）。
 - 出どころの表示：場面に `"src": "author"` / `"trylog"` を書くと、画面右上に「著者の主張」「TRY LOGの応用例」が出る（文言は `badges`）。
 - 読み間違い対策：場面に `"read"` を書くと、声はその書き方で読む（台本の `narration` はそのまま）。
+- 話す速さと間：`timeline.json` の `"speed"`（1.45 で早口）、`"lead"` `"tail"`（場面の前後の間・秒）。
+- 動画全体の読み替え：`"readings": {"一文": "いちぶん"}`。
+- `kit_wide.js`：横型の動画で共通に使う絵の部品（部屋、メーター用の枠、アイコン、輪など）。05 以降の `art.js` から使う。
 - `build.py`：音声の合成、場面の長さと合図の計算、効果音の生成、書き出し。
 - 声の差し替え：`01_vacuum/voice_custom/s01.wav`〜`s09.wav` を置いて再ビルドすると、長さと絵のタイミングが自動で合う。
 
@@ -35,3 +39,6 @@ python3 build.py 04_two_minute --bgm   # 横型 → 04_two_minute/04_two_minute_
 
 ## 04 / 2分ルール
 - 台本は `04_two_minute/script.md`、出典・著者の主張と応用例の区別・確認できていない点・説明欄の案は `04_two_minute/SOURCES.md`。
+
+## 05 / いつ・どこで
+- 台本 `05_when_where/script.md`、出典と確認できていない点 `05_when_where/SOURCES.md`、投稿文 `05_when_where/POSTING.md`。

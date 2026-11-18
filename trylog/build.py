@@ -140,6 +140,8 @@ def main(name):
     timing, voices, t0 = [], [], 0.0
     for i, s in enumerate(tl["scenes"], 1):
         say = s.get("read", s["narration"])     # read: 読み間違いを避けるための読み上げ用の書き方（任意）
+        for k, v in tl.get("readings", {}).items():   # readings: 動画全体での読み替え（例 "一文": "いちぶん"）
+            say = say.replace(k, v); s["cues"] = {c: w.replace(k, v) for c, w in s["cues"].items()}
         custom = d / "voice_custom" / f"s{i:02d}.wav"
         out, kana, cues = b / "voice" / f"s{i:02d}.wav", "", None
         if custom.exists():

@@ -12,3 +12,4 @@ body,#stage{width:1920px;height:1080px}
 #cap{left:300px;right:300px;top:866px;height:96px;font-size:42px;border-radius:20px}
 #note{top:980px;font-size:20px}
 #bar{left:80px;right:80px;top:1030px}
+#badge.study{border-color:#7db7ff;color:#7db7ff}

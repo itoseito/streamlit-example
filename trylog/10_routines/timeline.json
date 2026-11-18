@@ -13,8 +13,9 @@
  "voice": "本人の声（Fish Audio・参照音声からの合成）",
  "thumb": {
   "text": "マネ禁止？",
-  "who": "n1",
-  "br": 2
+  "who": "m2",
+  "br": 2,
+  "style": "b"
  },
  "badges": {
   "ai": "AI生成・架空の人物",

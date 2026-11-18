@@ -12,7 +12,7 @@
      著者の主張と、TRY LOGの例・見立ては、画面右上の表示（src）で分ける。作った体験談や成果、収入の約束は入れない。
    - `python3 voice_fish.py <動画>`（音声認識の照合で「要確認」が出た場面は、言い方を変えて作り直す）
    - 全場面の静止画を撮って、文字のはみ出し・重なり・空白がないか見る。
-   - `./render_one.sh <動画>`、`node thumb.js <動画>`、`python3 make_docs.py <動画> <章の場面番号>`
+   - `./render_one.sh <動画>`、`node thumb.js <動画>`（サムネは先を行く人＝外国人の3人のだれか、`"style": "b"`、文字は8文字以内）、`python3 make_docs.py <動画> <章の場面番号>`
    - `SOURCES.md`（原文との対応表と、確認できていない点）と `POSTING.md`（タイトル、説明欄、章、タグ、固定コメント、公開時のチェック）を書く。
    - ショート：`python3 make_short.py <動画> <見せ場の場面番号> "<続きが気になる一言>。続きは、本編で。"` → `python3 voice_fish.py <動画>_short` → `python3 build.py <動画>_short --bgm`
 5. `QUEUE.md` を更新し、コミットしてプッシュする。

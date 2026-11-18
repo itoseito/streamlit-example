@@ -13,8 +13,9 @@
  "voice": "本人の声（Fish Audio・参照音声からの合成）",
  "thumb": {
   "text": "30日これだけ",
-  "who": "n2",
-  "br": 3
+  "who": "m3",
+  "br": 3,
+  "style": "b"
  },
  "badges": {
   "ai": "AI生成・架空の人物",

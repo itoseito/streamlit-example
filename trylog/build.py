@@ -109,6 +109,9 @@ def sfx(kind):
             a = int(i * .045 * SR); m = int(SR * .02); tt = np.arange(m) / SR
             out[a:a + m] += rng.standard_normal(m) * np.exp(-tt / .004) * .5 + np.sin(2 * np.pi * (1500 + i * 60) * tt) * np.exp(-tt / .006) * .5
         return out * .7
+    if kind == "tick":                          # 時計・タイマーの小さな「コッ」
+        n = int(SR * .12); t = np.arange(n) / SR
+        return np.sin(2 * np.pi * 1250 * t) * env(n, .001, .018) * .8
     raise ValueError(kind)
 
 
@@ -134,25 +137,26 @@ def main(name):
     b = d / "build"; (b / "voice").mkdir(parents=True, exist_ok=True)
     timing, voices, t0 = [], [], 0.0
     for i, s in enumerate(tl["scenes"], 1):
+        say = s.get("read", s["narration"])     # read: 読み間違いを避けるための読み上げ用の書き方（任意）
         custom = d / "voice_custom" / f"s{i:02d}.wav"
         out, kana, cues = b / "voice" / f"s{i:02d}.wav", "", None
         if custom.exists():
             v, src = read_wav(custom), "差し替え音声"
         elif (VV_DIR / "0.vvm").exists():
-            c, kana = tts_voicevox(s["narration"], s["cues"], out)
+            c, kana = tts_voicevox(say, s["cues"], out)
             v, src = read_wav(out, trim=False), VV_NAME
             cues = {k: round(LEAD + x, 3) for k, x in c.items()}
         else:
-            tts(s["narration"], out)
+            tts(say, out)
             v, src = read_wav(out), "仮の合成音声（Open JTalk）"
         vd = len(v) / SR
         if cues is None:                        # 声の内訳が分からない場合は文字位置からの概算
             cues = {}
             for k, word in s["cues"].items():
-                pos = s["narration"].find(word)
+                pos = say.find(word)
                 if pos < 0:
                     sys.exit(f"場面{i}: 合図の言葉「{word}」が台本にありません")
-                cues[k] = round(LEAD + vd * pos / len(s["narration"]), 3)
+                cues[k] = round(LEAD + vd * pos / len(say), 3)
         if kana:
             print(f"   読み s{i:02d}: {kana}")
         dur = LEAD + vd + TAIL + (END_HOLD if i == len(tl["scenes"]) else 0)
@@ -181,8 +185,9 @@ def main(name):
     print(f"合計 {total:.1f}秒")
     if "--audio-only" in sys.argv:
         return
-    out = d / f"{name}_v2{'_bgm' if use_bgm else ''}.mp4"
-    subprocess.run(["node", str(ROOT / "render.js"), str(d / "index.html"), str(b / "audio.wav"), str(out)], check=True)
+    out = d / f"{name}{tl.get('suffix', '_v2')}{'_bgm' if use_bgm else ''}.mp4"
+    w, h = tl.get("size", [1080, 1920])          # 横型は timeline.json に "size": [1920, 1080]
+    subprocess.run(["node", str(ROOT / "render.js"), str(d / "index.html"), str(b / "audio.wav"), str(out), str(w), str(h)], check=True)
     print("完成:", out)
 
 

@@ -1,0 +1,14 @@
+/* 横型 16:9（1920×1080）用。色・文字は common.css をそのまま使い、配置だけ上書きする。 */
+body,#stage{width:1920px;height:1080px}
+#stage{background:radial-gradient(circle at 50% 50%,#12303a 0,#0b1820 58%)}
+#brand{left:80px;top:40px;font-size:34px}
+#brand i{width:12px;height:12px;margin-left:16px;vertical-align:13px}
+#tag{left:80px;top:90px;font-size:22px}
+#badge{position:absolute;right:80px;top:50px;padding:10px 26px;border-radius:999px;font-weight:700;font-size:26px;border:3px solid var(--dim);color:var(--dim)}
+#badge.author{border-color:var(--mint);color:var(--mint)}
+#badge.trylog{border-color:var(--orange);color:var(--orange)}
+#head{top:112px;font-size:60px}
+#art{left:120px;top:218px;width:1680px;height:630px}
+#cap{left:300px;right:300px;top:866px;height:96px;font-size:42px;border-radius:20px}
+#note{top:980px;font-size:20px}
+#bar{left:80px;right:80px;top:1030px}

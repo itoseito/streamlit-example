@@ -1,10 +1,10 @@
-// 使い方: node render.js <index.html> <audio.wav> <out.mp4>   1コマずつ描画してffmpegへ渡す
+// 使い方: node render.js <index.html> <audio.wav> <out.mp4> [幅 高さ]   1コマずつ描画してffmpegへ渡す
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
-const [html, audio, out] = process.argv.slice(2), FPS = 30;
+const [html, audio, out, W = 1080, H = 1920] = process.argv.slice(2), FPS = 30;
 (async () => {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: +W, height: +H }, deviceScaleFactor: 1 });
   await page.goto('file://' + html);
   await page.evaluate(() => document.fonts.ready);
   const total = await page.evaluate(() => window.TOTAL), frames = Math.round(total * FPS);

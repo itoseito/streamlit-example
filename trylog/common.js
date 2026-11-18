@@ -25,6 +25,7 @@ window.renderAt = function (t) {
   $("head").textContent = S.head; $("head").style.opacity = o; $("head").style.transform = `translateY(${(1 - fin) * 14}px)`;
   $("cap").textContent = S.caption; $("cap").style.opacity = cl((lt - .15) / .35) * fout;
   $("art").innerHTML = window.ART[S.id](lt, T.cues, T.dur); $("art").style.opacity = o;
+  const B = $("badge"); if (B) { const L = (D.badges || {})[S.src]; B.textContent = L || ""; B.className = S.src || ""; B.style.opacity = L ? o : 0; }
   document.querySelector("#bar b").style.width = (t / D.total * 100) + "%";
 };
 

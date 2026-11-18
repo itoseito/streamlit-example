@@ -42,7 +42,7 @@ const TYPES = {
     return s + (S.foot ? txt(x + w / 2, 314, S.foot, 1, "#6b6a63", 17) : ""); },
   // 言いかえの行（左 → 右）
   convert(S, lt, on) { const col = { mint: MINT, orange: ORANGE }[S.col] || ORANGE; return (S.rows || []).map(([a, b], i) => { const o = on(i + 1), y = 30 + i * (S.rows.length > 2 ? 106 : 150);
-    return box(70, y, 340, 84, o, PANEL, "#3a5563") + txt(240, y + 52, a, o * .75, INK, fit(a, 310, 25)) + arrow(430, y + 42, 430 + 90 * o, y + 42, o, col, 4)
+    return box(70, y, 340, 84, 1, PANEL, "#3a5563") + txt(240, y + 52, a, 1 - o * .3, INK, fit(a, 310, 25)) + box(550, y, 340, 84, .25 * (1 - o), PANEL, "#3a5563", 2.5) + arrow(430, y + 42, 430 + 90 * o, y + 42, o, col, 4)
       + box(550 + (1 - o) * 30, y, 340, 84, o, PANEL, col, 3.5) + txt(720 + (1 - o) * 30, y + 52, b, o, col, fit(b, 310, 25)); }).join(""); },
   // 棒グラフ。bars: [{label, value(0〜100), text, col}]
   bars(S, lt, on) { const N = S.bars.length, k = on(1, .9); let s = `<line x1="160" y1="290" x2="800" y2="290" stroke="#3a5563" stroke-width="3"/>` + (S.title ? txt(480, 34, S.title, 1, DIM, 21) : "");
@@ -55,14 +55,14 @@ const TYPES = {
       + slotRow(130, v.map((t, i) => on(i + 1) > .5 ? t : ""), [1, 1, 1], col, lt, -1, x0, sc) + (S.post ? txt(480 + x0 / 2, 280, S.post, on(4), col, 24) : ""); },
   // 左に項目、右に答え（正直コーナーなど）
   list(S, lt, on) { return (S.rows || []).map(([l, r], i) => { const o = on(i + 1), y = 44 + i * (S.rows.length > 3 ? 76 : 96);
-    return box(110, y, 740, 64, o, PANEL, "#3a5563", 2.5, 14) + txt(140, y + 42, l, o, INK, fit(l, 380, 25), "start") + txt(820, y + 42, r, o, ORANGE, fit(r, 330, 25), "end"); }).join(""); },
+    return box(110, y, 740, 64, 1, PANEL, "#3a5563", 2.5, 14) + txt(140, y + 42, l, .55 + .45 * o, INK, fit(l, 380, 25), "start") + txt(820, y + 42, r, o, ORANGE, fit(r, 330, 25), "end"); }).join(""); },
   // まとめのカード（3〜4枚）。cards: [[アイコン名, 文]]
   cards(S, lt, on) { const N = S.cards.length, w = N > 3 ? 200 : 260, gap = (960 - N * w) / (N + 1);
     return S.cards.map(([ic, t], i) => { const o = on(i + 1), x = gap + i * (w + gap);
-      return box(x, 70 - (1 - o) * 12, w, 220, o, PANEL, MINT, 3, 18) + ico(ic, x + w / 2 - 22, 110, MINT, o, lt + i, 1) + txt(x + w / 2, 180, `${"①②③④"[i]}`, o, MINT, 26) + txt(x + w / 2, 232, t, o, INK, fit(t, w - 24, 22)); }).join(""); },
+      return box(x, 70, w, 220, .3 + .7 * o, PANEL, MINT, 3, 18) + ico(ic, x + w / 2 - 22, 110 - (1 - o) * 10, MINT, o, lt + i, 1) + txt(x + w / 2, 180, `${"①②③④"[i]}`, .4 + .6 * o, MINT, 26) + txt(x + w / 2, 232, t, o, INK, fit(t, w - 24, 22)); }).join(""); },
   // コメントの呼びかけ
-  comment(S, lt, on) { return (S.blank === false ? "" : slotRow(90, ["", "", ""], [1, 1, 1], ORANGE, lt, Math.floor(lt * 1.2) % 3)) + ico("chat", 440, S.blank === false ? 90 : 210, ORANGE, on(1), lt, 1.6)
-    + txt(480, S.blank === false ? 220 : 330, S.text || "一文だけ、コメントで", on(1), INK, fit(S.text || "", 860, 26)); },
+  comment(S, lt, on) { return (S.blank === false ? "" : slotRow(90, ["", "", ""], [1, 1, 1], ORANGE, lt, Math.floor(lt * 1.2) % 3)) + ico("chat", 440, S.blank === false ? 90 : 210, ORANGE, seg(lt, .1, .4), lt, 1.6)
+    + txt(480, S.blank === false ? 220 : 330, S.text || "一文だけ、コメントで", seg(lt, .1, .4), INK, fit(S.text || "", 860, 26)); },
   // 30日のカレンダー。hi=今の週(0〜3)。右に見出しと行
   calendar(S, lt, on) { let s = txt(214, 36, "最初の30日", 1, DIM, 20);
     for (let d = 0; d < 30; d++) { const wk = Math.min(Math.floor(d / 7), 3), x = 60 + (d % 7) * 44, y = 52 + Math.floor(d / 7) * 56, cur = wk === S.hi, past = wk < S.hi, o = cur ? on(1) : 1;
@@ -74,7 +74,7 @@ const TYPES = {
   // 手順のチェックリスト。最後の合図で phrase（合言葉）の吹き出し
   steps(S, lt, on, c, n) { const N = S.steps.length, x = S.who ? 270 : 150, w = S.who ? 640 : 660, dy = N > 3 ? 58 : 70;
     let s = (S.who ? photo(S.who, 40, 30, 200, 300, lt) : "") + (S.title ? txt(x, 40, S.title, 1, DIM, 20, "start") : "");
-    S.steps.forEach((t, i) => { const o = on(i + 1), y = 58 + i * dy; s += box(x, y, w, dy - 12, o, PANEL, MINT, 2.5, 12) + check(x + 18, y + (dy - 12) / 2, o, MINT, 1) + txt(x + 60, y + (dy - 12) / 2 + 9, t, o, INK, fit(t, w - 80, 24), "start"); });
+    S.steps.forEach((t, i) => { const o = on(i + 1), y = 58 + i * dy; s += box(x, y, w, dy - 12, .25 + .75 * o, PANEL, MINT, 2.5, 12) + check(x + 18, y + (dy - 12) / 2, o, MINT, 1) + txt(x + 60, y + (dy - 12) / 2 + 9, t, o, INK, fit(t, w - 80, 24), "start"); });
     if (S.phrase) { const o = on(N + 1); s += box(x + 40, 58 + N * dy, w - 80, 56, o, PANEL, ORANGE, 3.5, 28) + txt(x + w / 2, 58 + N * dy + 38, S.phrase, o, ORANGE, fit(S.phrase, w - 120, 26)); }
     return s; },
   // ルーティンの判定。rows: [["ok"|"ng"|"note", 文]]
@@ -84,7 +84,7 @@ const TYPES = {
         + txt(374, y + 28, k === "ok" ? "マネしていい" : k === "ng" ? "マネしない" : "もと", o, col, 15, "start") + txt(374, y + 52, t, o, INK, fit(t, 520, 22), "start"); });
     return s; },
   // 大きな一言。text は c1、sub は c2、sub2 は c3
-  big(S, lt, on) { const o = on(1); return (S.kicker ? txt(480, 70, S.kicker, 1, DIM, 22) : "")
+  big(S, lt, on) { const o = S.kicker ? on(1) : seg(lt, .1, .4); return (S.kicker ? txt(480, 70, S.kicker, 1, DIM, 22) : "")
     + `<g transform="translate(480 170) scale(${.9 + .1 * o}) translate(-480 -170)">${txt(480, 190, S.text, o, { orange: ORANGE, mint: MINT }[S.col] || INK, fit(S.text, 860, 64))}</g>`
     + (S.sub ? txt(480, 262, S.sub, on(2), MINT, fit(S.sub, 860, 28)) : "") + (S.sub2 ? txt(480, 312, S.sub2, on(3), DIM, fit(S.sub2, 860, 22)) : ""); },
   // 締め

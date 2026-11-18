@@ -1,0 +1,16 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><link rel="stylesheet" href="common.css">
+<style>body,#t{width:1920px;height:1080px}#t{position:relative;overflow:hidden;background:radial-gradient(circle at 30% 50%,#17414d 0,#0b1820 62%)}
+#ph{position:absolute;right:0;top:0;width:900px;height:1080px;background-size:cover;background-position:50% 12%}
+#fade{position:absolute;right:0;top:0;width:900px;height:1080px;background:linear-gradient(90deg,#0d222b 0,#0d222b00 38%)}
+#brand{position:absolute;left:90px;top:70px;font-weight:900;font-size:56px;color:var(--mint);letter-spacing:2px}#brand i{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--orange);margin-left:20px;vertical-align:22px}
+#txt{position:absolute;left:84px;top:300px;width:1100px;font-weight:900;line-height:1.08;color:#fff;text-shadow:0 8px 0 #0b1820,0 0 40px #0b1820;-webkit-text-stroke:6px #0b1820;paint-order:stroke fill}
+#txt b{color:var(--orange)}#bar{position:absolute;left:90px;top:800px;width:420px;height:18px;border-radius:9px;background:var(--mint)}
+#ai{position:absolute;right:50px;bottom:44px;border:4px solid #f6e9b8;color:#f6e9b8;background:#0b1820cc;border-radius:999px;padding:10px 30px;font-weight:700;font-size:34px}</style></head><body>
+<div id="t"><div id="ph"></div><div id="fade"></div><div id="brand">TRY LOG<i></i></div><div id="txt"></div><div id="bar"></div><div id="ai">AI生成の人物</div></div>
+<script>// 使い方: thumb.html?who=n2&text=30日これだけ&br=3   br=何文字目で改行するか（2行目がオレンジ）
+const q=new URLSearchParams(location.search),t=q.get("text")||"",hl=+(q.get("hl")||Math.ceil(t.length/2)),n=t.length;
+document.getElementById("ph").style.backgroundImage=`url(cast/${q.get("who")||"n1"}.jpg)`;
+const half=q.get("br")?+q.get("br"):(n>4?Math.ceil(n/2):n),l1=t.slice(0,half),l2=t.slice(half),el=document.getElementById("txt");
+el.style.fontSize=Math.min(300,Math.floor(1040/Math.max(l1.length,l2.length,2)))+"px";
+el.innerHTML=l2?`${l1}<br><b>${l2}</b>`:`<b>${l1}</b>`;
+const rows=l2?2:1,fs=parseInt(el.style.fontSize);el.style.top=(520-rows*fs*.54)+"px";document.getElementById("bar").style.top=(520+rows*fs*.56+20)+"px";</script></body></html>

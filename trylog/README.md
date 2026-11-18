@@ -42,3 +42,16 @@ python3 build.py 04_two_minute --bgm   # 横型 → 04_two_minute/04_two_minute_
 
 ## 05 / いつ・どこで
 - 台本 `05_when_where/script.md`、出典と確認できていない点 `05_when_where/SOURCES.md`、投稿文 `05_when_where/POSTING.md`。
+
+## 08 以降：場面の型で量産する
+台本の各場面に `"art": "hero"` などと型を書くだけで絵が出る（`kit_scenes.js`）。絵のプログラムを動画ごとに書かなくてよい。
+- 型：`hero`（主人公＋言葉）`duo`（人物紹介＋AI生成の判）`board`（先を行く人＋紙の図）`convert`（言いかえ）`bars`（棒グラフ）`slots`（いつ・どこで・何を）`list`（項目と答え）`cards`（まとめ）`calendar`（30日）`steps`（手順）`verdict`（判定）`big`（大きな一言）`comment`（呼びかけ）`end`（締め）
+- 合図は `cues` の `c1, c2, …` の順に、要素が1つずつ出る。
+- いつもの流れ：冒頭の共感 → 「AI生成・架空の人物」の明示 → 約束 → 出典 → 図解 → 正直な限界 → コメントの問いかけ → 締め。
+- 作る手順：
+  1. `<番号_名前>/timeline.json` を書く（`make_08_10.py` が08〜10の元。写して直すと早い）。`index.html` は 08 のものを写す。
+  2. `python3 voice_fish.py <動画>` … 本人の声で読み上げを作り、音声認識で台本と照合する（`voice_ref/` の録音が見本）。
+  3. `./render_one.sh <動画>` … BGMあり・なしの2本を書き出す。
+  4. `node thumb.js <動画>` … サムネ（文字は8文字以内。`timeline.json` の `thumb`）。
+  5. `python3 make_docs.py <動画> <章にする場面番号>` … 台本と章の時刻。
+- 人物は `cast/`（AI生成・架空。決まりは `cast/CAST.md`）。

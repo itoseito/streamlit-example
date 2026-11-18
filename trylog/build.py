@@ -103,6 +103,12 @@ def sfx(kind):
     if kind == "chime":                         # まとめの和音
         n = int(SR * 1.4); t = np.arange(n) / SR
         return sum(np.sin(2 * np.pi * f * t) for f in (660, 880, 1320)) / 3 * env(n, .01, .5) * .8
+    if kind == "zip":                           # ファスナーの「ジーッ」：細かいカチカチの連続
+        n = int(SR * .8); out = np.zeros(n)
+        for i in range(16):
+            a = int(i * .045 * SR); m = int(SR * .02); tt = np.arange(m) / SR
+            out[a:a + m] += rng.standard_normal(m) * np.exp(-tt / .004) * .5 + np.sin(2 * np.pi * (1500 + i * 60) * tt) * np.exp(-tt / .006) * .5
+        return out * .7
     raise ValueError(kind)
 
 

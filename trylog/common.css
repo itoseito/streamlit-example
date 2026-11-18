@@ -1,0 +1,21 @@
+@font-face{font-family:N;font-weight:500;src:url(fonts/noto-sans-jp-japanese-500-normal.woff2) format("woff2")}
+@font-face{font-family:NL;font-weight:500;src:url(fonts/noto-sans-jp-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:N;font-weight:700;src:url(fonts/noto-sans-jp-japanese-700-normal.woff2) format("woff2")}
+@font-face{font-family:NL;font-weight:700;src:url(fonts/noto-sans-jp-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:N;font-weight:900;src:url(fonts/noto-sans-jp-japanese-900-normal.woff2) format("woff2")}
+@font-face{font-family:NL;font-weight:900;src:url(fonts/noto-sans-jp-latin-900-normal.woff2) format("woff2")}
+:root{--navy:#0b1820;--panel:#16262f;--mint:#5fd6c3;--orange:#f39a4a;--ink:#f3f7f8;--dim:#8ea3ad}
+*{margin:0;box-sizing:border-box}
+body{width:1080px;height:1920px;overflow:hidden;background:var(--navy);font-family:NL,N,sans-serif;color:var(--ink)}
+#stage{position:relative;width:1080px;height:1920px;background:radial-gradient(circle at 50% 46%,#12303a 0,#0b1820 46%)}
+#brand{position:absolute;left:70px;top:176px;font-weight:900;font-size:38px;color:var(--mint);letter-spacing:1px}
+#brand i{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--orange);margin-left:18px;vertical-align:14px}
+#tag{position:absolute;left:70px;top:232px;font-size:26px;color:var(--dim);font-weight:500}
+#head{position:absolute;left:0;right:0;top:330px;text-align:center;font-weight:900;font-size:74px;letter-spacing:1px}
+#art{position:absolute;left:0;top:470px;width:1080px;height:900px}
+#cap{position:absolute;left:70px;right:70px;top:1400px;height:132px;border-radius:22px;background:var(--panel);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:50px}
+#note{position:absolute;left:0;right:0;top:1562px;text-align:center;font-size:24px;color:var(--dim);font-weight:500}
+#bar{position:absolute;left:70px;right:70px;top:1616px;height:5px;background:#22363f;border-radius:3px}
+#bar b{display:block;height:100%;background:var(--mint);border-radius:3px}
+svg text{font-family:NL,N,sans-serif;font-weight:700}

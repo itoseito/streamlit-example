@@ -1,10 +1,13 @@
 # TRY LOG 動画ソース
 
 ```
-python3 build.py 01_vacuum      # → 01_vacuum/01_vacuum_v2.mp4（1080×1920・30fps）
+python3 build.py 01_vacuum --bgm   # → 01_vacuum/01_vacuum_v2_bgm.mp4（1080×1920・30fps）。--bgm を外すとBGMなし
+python3 build.py 02_zipper --bgm
+python3 build.py 03_windows --bgm
 ```
 - `01_vacuum/timeline.json`：見出し・字幕・ナレーション・合図の言葉・効果音。文言の修正はここだけ。
-- `01_vacuum/index.html`：絵とアニメーション（SVG）。色は冒頭の `:root` で変更。
+- `<動画>/art.js`：その動画の絵とアニメーション（SVG）。
+- `common.js` / `common.css`：全動画共通の枠・色・文字・場面切り替え。色は `common.css` 冒頭の `:root`。
 - `build.py`：音声の合成、場面の長さと合図の計算、効果音の生成、書き出し。
 - 声の差し替え：`01_vacuum/voice_custom/s01.wav`〜`s09.wav` を置いて再ビルドすると、長さと絵のタイミングが自動で合う。
 
@@ -22,3 +25,6 @@ python3 build.py 01_vacuum      # → 01_vacuum/01_vacuum_v2.mp4（1080×1920・
 - 説明欄の注記：「構造と熱移動を簡略化した模式図です。製品によって構造・性能は異なります。完全に熱移動を止めるものではありません。」
 - 参考ページの画像・動画・ロゴは転載していない。図はオリジナル。
 - 元の説明欄にある「36秒」は v2 では長さが変わるため、公開時に書き換えること。
+- ファスナーの参考：YKK「ファスナーの仕組み」 https://www.ykk.com/ykk/tech/01.html
+- 飛行機の窓の参考：Smithsonian NASM "How Things Fly" https://howthingsfly.si.edu/ask-an-explainer/why-are-pressurized-windows-rounded-corners
+- 参考ページ2件はこの環境から接続できず、今回は内容を再確認していない（ChatGPT版の確認日は2026-11-18）。

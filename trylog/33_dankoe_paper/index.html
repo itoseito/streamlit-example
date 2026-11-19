@@ -1,0 +1,59 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:N;font-weight:700;src:url(../fonts/noto-sans-jp-japanese-700-normal.woff2)}
+@font-face{font-family:N;font-weight:900;src:url(../fonts/noto-sans-jp-japanese-900-normal.woff2)}
+@font-face{font-family:NL;font-weight:700;src:url(../fonts/noto-sans-jp-latin-700-normal.woff2)}
+@font-face{font-family:NL;font-weight:900;src:url(../fonts/noto-sans-jp-latin-900-normal.woff2)}
+*{box-sizing:border-box}
+body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#d9572a;font-family:NL,N,sans-serif}
+#paper{position:absolute;left:44px;right:44px;top:70px;bottom:70px;background:#f2ede3;
+ background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.018) 0 2px,transparent 2px 5px);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+#mast{position:absolute;top:60px;left:60px;right:60px;text-align:center;color:#1d1a17}
+#mast .t{font-weight:900;font-size:64px;letter-spacing:18px}
+#mast .r{border-top:4px solid #1d1a17;border-bottom:1px solid #1d1a17;height:9px;margin:12px 0 10px}
+#mast .s{display:flex;justify-content:space-between;font-size:24px;font-weight:700;color:#5c544c}
+#head{position:absolute;top:300px;left:40px;right:40px;text-align:center;font-weight:900;font-size:76px;line-height:1.3;color:#1d1a17}
+#head em{font-style:normal;background:#d9572a;color:#fff;padding:0 14px;border-radius:6px}
+#panel{position:absolute;top:560px;left:60px;right:60px;height:600px;background:#d9572a;border-radius:10px;overflow:hidden;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px}
+#panel .big{font-weight:900;font-size:250px;line-height:1;letter-spacing:-4px}
+#panel .big small{font-size:.44em;letter-spacing:0;margin-left:6px}
+#panel .sub{font-weight:900;font-size:50px;margin-top:30px}
+#panel .en{font-family:"Liberation Serif",serif;font-style:italic;font-size:58px;line-height:1.3}
+#panel .jp{font-weight:900;font-size:52px;margin-top:36px;background:#1d1a17;padding:10px 24px;border-radius:8px}
+#panel ul{list-style:none;margin:0;padding:0;text-align:left}
+#panel li{font-weight:900;font-size:60px;margin:22px 0}
+#panel li:before{content:"✓ ";color:#1d1a17}
+#cap{position:absolute;top:1200px;left:60px;right:60px;background:#1d1a17;border-radius:10px;padding:26px 30px;text-align:center}
+#cap .j{color:#fff;font-weight:900;font-size:46px;white-space:nowrap;line-height:1.35}
+#cap .e{color:#f39a4a;font-family:"Liberation Serif",serif;font-style:italic;font-size:32px;margin-top:8px}
+#cols{position:absolute;top:1440px;left:60px;right:60px;height:200px;column-count:3;column-gap:30px;font-size:21px;line-height:1.7;color:rgba(29,26,23,.35);font-weight:700;overflow:hidden;text-align:justify}
+#note{position:absolute;bottom:60px;left:60px;right:60px;font-size:20px;color:#6a625a;font-weight:700;text-align:center}
+#bar{position:absolute;bottom:30px;left:60px;right:60px;height:6px;background:rgba(0,0,0,.1)}#bar b{display:block;height:100%;background:#d9572a}
+</style></head><body><div id="paper">
+<div id="mast"><div class="t">日刊 習慣</div><div class="r"></div><div class="s"><span>海外の習慣を、日本の毎日で</span><span>TRY LOG</span></div></div>
+<div id="head"></div><div id="panel"></div><div id="cap"><div class="j"></div><div class="e"></div></div>
+<div id="cols"></div><div id="note"></div><div id="bar"><b></b></div></div>
+<script src="build/data.js"></script>
+<script>
+const D=window.DATA,$=s=>document.querySelector(s),cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>{x=cl(x);return x*x*(3-2*x)};
+$("#note").textContent=D.note; $("#cols").textContent=D.scenes.map(s=>s.narration).join("　").repeat(3);
+window.TOTAL=D.total;
+function panelHTML(p){if(p.type==="num")return `<div class="big" style="font-size:${p.big.replace(/<.*/,"").length>3?180:250}px">${p.big}</div><div class="sub">${p.sub}</div>`;
+ if(p.type==="quote")return `<div class="en">${p.en}</div><div class="jp">${p.jp}</div>`;
+ return `<ul>${p.items.map(x=>`<li>${x}</li>`).join("")}</ul>`}
+let last=-1;
+window.renderAt=function(t){let i=D.timing.findIndex(s=>t<s.start+s.dur);if(i<0)i=D.timing.length-1;
+ const T=D.timing[i],S=D.scenes[i],lt=t-T.start,c1=(T.cues||{}).c1||.4;
+ if(i!==last){$("#head").innerHTML=S.head.replace("/","<br>").replace(/\[(.+?)\]/g,"<em>$1</em>");$("#panel").innerHTML=panelHTML(S.panel);
+  $("#cap .j").textContent=S.caption;$("#cap .e").textContent=S.en||"";last=i}
+ const fin=ease(lt/.3),fout=i===D.timing.length-1?1:cl((T.dur-lt)/.2);
+ $("#head").style.opacity=fin*fout;$("#head").style.transform=`translateY(${(1-fin)*30}px)`;
+ const k=ease((lt-c1+.25)/.35),pop=1+.06*Math.sin(Math.PI*cl((lt-c1+.25)/.45));
+ $("#panel").style.transform=`scale(${(.92+.08*k)*pop})`;$("#panel").style.opacity=(.25+.75*k)*fout;
+ if(S.panel.type==="list")[...document.querySelectorAll("#panel li")].forEach((li,n)=>li.style.opacity=cl((lt-c1+.2-n*.6)/.3));
+ $("#cap").style.opacity=cl((lt-.1)/.3)*fout;
+ $("#cols").style.transform=`translateY(${-t*3}px)`;
+ $("#bar b").style.width=(t/D.total*100)+"%"};
+renderAt(0);
+</script></body></html>
